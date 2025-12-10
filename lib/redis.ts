@@ -8,11 +8,13 @@ Consistent URL: local Redis container exposes port 6379.
 
 import { createClient } from "@redis/client";
 
+const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+
 let client: ReturnType<typeof createClient> | null = null;
 
 export function getRedisClient() {
   if (!client) {
-    client = createClient({ url: "redis://localhost:6379" });
+    client = createClient({ url: redisUrl });
 
     client.on("error", (err) => {
       console.error("Redis Client Error:", err);
