@@ -1,23 +1,16 @@
-import { type Timeframe } from "@/types/timeframe";
+import { type TCandle } from "@/types/candle";
+import { type TTimeframe } from "@/types/timeframe";
 
 type FetchHistoricalParams = {
   symbol: string;
   currency: string;
-  timeframe: Timeframe;
-};
-
-type CandleType = {
-  time: number;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
+  timeframe: TTimeframe;
 };
 
 const baseUrl = process.env.CRYPTO_COMPARE_URL;
 const apiKey = process.env.CRYPTO_COMPARE_API_KEY;
 
-const ENDPOINT_MAP: Record<Timeframe, string> = {
+const ENDPOINT_MAP: Record<TTimeframe, string> = {
   "1h": "histohour",
   "1d": "histoday",
   // CryptoCompare has no "histoweek"
@@ -66,7 +59,7 @@ export async function fetchHistoricalCandles(params: FetchHistoricalParams) {
     throw new Error("Provider returned an empty candles array.");
   }
 
-  const normalized: CandleType[] = raw.map((c) => ({
+  const normalized: TCandle[] = raw.map((c) => ({
     time: c.time,
     open: Number(c.open),
     high: Number(c.high),

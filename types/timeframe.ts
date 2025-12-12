@@ -1,1 +1,1 @@
-export type Timeframe = "1h" | "1d" | "1w";
+export type TTimeframe = "1h" | "1d" | "1w";
