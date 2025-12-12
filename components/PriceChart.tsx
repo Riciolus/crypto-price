@@ -36,10 +36,10 @@ export default function PriceChart({ candles }: PriceChartProps) {
       height: 400,
       layout: {
         textColor: "#E5E7EB",
-        background: { type: ColorType.Solid, color: "#0E0E0F" }, // dark theme
+        background: { type: ColorType.Solid, color: "#0a0a0a" }, // dark theme
       },
       grid: {
-        vertLines: { color: "#1F1F23" },
+        vertLines: { color: "#0E0E0F" },
         horzLines: { color: "#1F1F23" },
       },
       timeScale: {
