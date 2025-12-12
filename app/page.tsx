@@ -1,10 +1,11 @@
 "use client";
 
+import PriceChart from "@/components/PriceChart";
 import { TCandle } from "@/types/candle";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [candles, setCandles] = useState<TCandle[] | null>(null);
+  const [data, setData] = useState<TCandle[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +16,7 @@ export default function Home() {
 
       try {
         const res = await fetch(
-          "/api/prices?symbol=ETH&currency=USD&timeframe=1h",
+          "/api/prices?symbol=BTC&currency=USD&timeframe=1h",
         );
 
         if (!res.ok) {
@@ -23,7 +24,7 @@ export default function Home() {
         }
 
         const json = await res.json();
-        setCandles(json);
+        setData(json);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -42,12 +43,10 @@ export default function Home() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        {candles?.map((c) => (
-          <pre key={c.time}>{JSON.stringify(c, null, 2)}</pre>
-        ))}
-      </main>
+    <div>
+      <div className="p-12">
+        {!loading && data && <PriceChart candles={data} />}
+      </div>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { fetchHistoricalCandles } from "@/lib/cryptocompare";
 import { getRedisClient } from "@/lib/redis";
-import { Timeframe } from "@/types/timeframe";
+import { TTimeframe } from "@/types/timeframe";
 
-const TTL_MAP: Record<Timeframe, number> = {
+const TTL_MAP: Record<TTimeframe, number> = {
   "1h": 60,
   "1d": 300,
   "1w": 900,
@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const symbol = searchParams.get("symbol") || "BTC";
     const currency = searchParams.get("currency") || "USD";
-    const timeframe = (searchParams.get("timeframe") || "1h") as Timeframe;
+    const timeframe = (searchParams.get("timeframe") || "1h") as TTimeframe;
 
     const redis = getRedisClient();
     const key = `prices:${symbol}:${currency}:${timeframe}`;

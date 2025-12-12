@@ -30,9 +30,9 @@ export async function fetchHistoricalCandles(params: FetchHistoricalParams) {
 
   const endpoint = ENDPOINT_MAP[timeframe];
 
-  const limit = timeframe === "1w" ? 7 : 50;
+  // const limit = timeframe === "1w" ? 7 : 50;
 
-  const url = `${baseUrl}/data/v2/${endpoint}?fsym=${symbol}&tsym=${currency}&limit=${limit}`;
+  const url = `${baseUrl}/data/v2/${endpoint}?fsym=${symbol}&tsym=${currency}`;
 
   const res = await fetch(url, {
     headers: {
