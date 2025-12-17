@@ -44,11 +44,11 @@ export default function PriceChart({ candles }: PriceChartProps) {
       },
       timeScale: {
         rightOffset: 0,
-        fixRightEdge: false,
+        fixRightEdge: true,
         lockVisibleTimeRangeOnResize: false,
-        barSpacing: 6,
-        minBarSpacing: 1,
       },
+      handleScale: false,
+      handleScroll: false,
     });
 
     chartRef.current = chart;
@@ -61,23 +61,7 @@ export default function PriceChart({ candles }: PriceChartProps) {
 
     seriesRef.current = series;
 
-    // ResizeObserver to auto-fit chart when container width changes
-    const resizeObserver = new ResizeObserver((entries) => {
-      const { width } = entries[0].contentRect;
-      chart.applyOptions({ width });
-
-      // Debounced auto-fit
-      clearTimeout((chart as any)._fitTimeout); // eslint-disable-line @typescript-eslint/no-explicit-any
-      // eslint-disable-next-line
-      (chart as any)._fitTimeout = setTimeout(() => {
-        chart.timeScale().fitContent();
-      }, 50);
-    });
-
-    resizeObserver.observe(containerRef.current);
-
     return () => {
-      resizeObserver.disconnect();
       chart.remove();
     };
   }, []);
