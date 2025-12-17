@@ -1,5 +1,7 @@
 import { fetchHistoricalCandles } from "@/lib/cryptocompare";
 import { getRedisClient } from "@/lib/redis";
+import { CURRENCIES, TCurrency } from "@/types/currency";
+import { SYMBOLS, TSymbol } from "@/types/symbol";
 import { TTimeframe } from "@/types/timeframe";
 
 const TTL_MAP: Record<TTimeframe, number> = {
@@ -8,13 +10,40 @@ const TTL_MAP: Record<TTimeframe, number> = {
   "1w": 900,
 };
 
-export async function GET(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const symbol = searchParams.get("symbol") || "BTC";
-    const currency = searchParams.get("currency") || "USD";
-    const timeframe = (searchParams.get("timeframe") || "1h") as TTimeframe;
+function isTimeframe(value: string): value is TTimeframe {
+  return value in TTL_MAP;
+}
 
+function isSymbol(value: string): value is TSymbol {
+  return SYMBOLS.includes(value as TSymbol);
+}
+
+function isCurrency(value: string): value is TCurrency {
+  return CURRENCIES.includes(value as TCurrency);
+}
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+
+  const rawTimeframe = searchParams.get("timeframe") ?? "1h";
+  const symbol = searchParams.get("symbol") || "BTC";
+  const currency = searchParams.get("currency") || "USD";
+
+  if (!isTimeframe(rawTimeframe)) {
+    return Response.json({ message: "Invalid timeframe" }, { status: 400 });
+  }
+
+  if (!isSymbol(symbol)) {
+    return Response.json({ message: "Invalid symbol" }, { status: 400 });
+  }
+
+  if (!isCurrency(currency)) {
+    return Response.json({ message: "Invalid currency" }, { status: 400 });
+  }
+
+  const timeframe = rawTimeframe;
+
+  try {
     const redis = getRedisClient();
     const key = `prices:${symbol}:${currency}:${timeframe}`;
 
@@ -30,7 +59,7 @@ export async function GET(req: Request) {
       timeframe,
     });
 
-    const ttl = TTL_MAP[timeframe] ?? 60;
+    const ttl = TTL_MAP[timeframe];
     await redis.set(key, JSON.stringify(candles), {
       EX: ttl,
     });
