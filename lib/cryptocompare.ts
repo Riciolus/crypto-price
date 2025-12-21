@@ -1,5 +1,6 @@
 import { type TCandle } from "@/types/candle";
 import { type TTimeframe } from "@/types/timeframe";
+import { TIMEFRAME_CONFIG } from "./timeframeConfig";
 
 type FetchHistoricalParams = {
   symbol: string;
@@ -9,14 +10,6 @@ type FetchHistoricalParams = {
 
 const baseUrl = process.env.CRYPTO_COMPARE_URL;
 const apiKey = process.env.CRYPTO_COMPARE_API_KEY;
-
-const ENDPOINT_MAP: Record<TTimeframe, string> = {
-  "1h": "histohour",
-  "1d": "histoday",
-  // CryptoCompare has no "histoweek"
-  // We keep "1w" mapped to histoday to fetch 7 days
-  "1w": "histoday",
-};
 
 export async function fetchHistoricalCandles(params: FetchHistoricalParams) {
   if (!baseUrl) {
@@ -28,11 +21,15 @@ export async function fetchHistoricalCandles(params: FetchHistoricalParams) {
 
   const { symbol, currency, timeframe } = params;
 
-  const endpoint = ENDPOINT_MAP[timeframe];
+  const config = TIMEFRAME_CONFIG[timeframe];
+  const endpoint = config.endpoint;
+  const limit = config.limit;
+  const aggregate = config.aggregate;
 
-  // const limit = timeframe === "1w" ? 7 : 50;
-
-  const url = `${baseUrl}/data/v2/${endpoint}?fsym=${symbol}&tsym=${currency}`;
+  const url = `${baseUrl}/data/v2/${endpoint}?fsym=${symbol}&tsym=${currency}&limit=${limit}${
+    aggregate ? `&aggregate=${aggregate}` : ""
+  }`;
+  console.log("Fetching candles from URL:", url);
 
   const res = await fetch(url, {
     headers: {

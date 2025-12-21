@@ -72,7 +72,7 @@ export async function GET(req: Request) {
       {
         message: "Failed to fetch historical prices.",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
