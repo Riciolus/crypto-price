@@ -23,13 +23,16 @@ export async function fetchHistoricalCandles(params: FetchHistoricalParams) {
 
   const config = TIMEFRAME_CONFIG[timeframe];
   const endpoint = config.endpoint;
-  const limit = config.limit;
-  const aggregate = config.aggregate;
 
-  const url = `${baseUrl}/data/v2/${endpoint}?fsym=${symbol}&tsym=${currency}&limit=${limit}${
-    aggregate ? `&aggregate=${aggregate}` : ""
-  }`;
-  console.log("Fetching candles from URL:", url);
+  const url = new URL(`${baseUrl}/data/v2/${endpoint}`);
+
+  url.searchParams.set("fsym", symbol);
+  url.searchParams.set("tsym", currency);
+  url.searchParams.set("limit", String(config.limit));
+
+  if (config.aggregate) {
+    url.searchParams.set("aggregate", String(config.aggregate));
+  }
 
   const res = await fetch(url, {
     headers: {
