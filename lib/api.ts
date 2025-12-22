@@ -8,13 +8,13 @@ type TGetPriceCandles = {
   currency: TCurrency;
 };
 
-export async function getPriceCandles({
-  currency,
-  symbol,
-  timeframe,
-}: TGetPriceCandles) {
+export async function getPriceCandles(
+  { currency, symbol, timeframe }: TGetPriceCandles,
+  signal?: AbortSignal
+) {
   const res = await fetch(
     `/api/prices?symbol=${symbol}&currency=${currency}&timeframe=${timeframe}`,
+    { signal }
   );
 
   if (!res.ok) {

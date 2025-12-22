@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/Button";
+import ChartControls from "@/components/ChartControls";
 import ChartLoading from "@/components/ChartLoading";
 import Header from "@/components/Header";
 import PriceChart from "@/components/PriceChart";
@@ -11,7 +11,6 @@ import { TCurrency } from "@/types/currency";
 import { TSymbol } from "@/types/symbol";
 import { TTimeframe } from "@/types/timeframe";
 import { useEffect, useState } from "react";
-import { FaChartColumn, FaChartLine } from "react-icons/fa6";
 
 type TChartView = "line" | "candle";
 
@@ -26,29 +25,36 @@ export default function Home() {
   const [symbol, setSymbol] = useState<TSymbol>("BTC");
   const [currency, setCurrency] = useState<TCurrency>("USD");
 
-  const meta = SYMBOL_META[symbol];
   const latestPrice = data && data.length > 0 ? data[data.length - 1].close : null;
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchCandles() {
       setLoading(true);
       setError(null);
 
       try {
-        const json = await getPriceCandles({ currency, symbol, timeframe });
+        const json = await getPriceCandles(
+          { currency, symbol, timeframe },
+          controller.signal
+        );
         setData(json);
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Unexpected error");
+        if (err instanceof DOMException && err.name === "AbortError") {
+          return; // expected, ignore
         }
+        setError(err instanceof Error ? err.message : "Unexpected error");
       } finally {
         setLoading(false);
       }
     }
 
     fetchCandles();
+
+    return () => {
+      controller.abort();
+    };
   }, [timeframe, currency, symbol]);
 
   return (
@@ -62,55 +68,14 @@ export default function Home() {
         />
 
         <div className="space-y-2 md:space-y-1">
-          <p className="text-sm font-semibold text-gray-400">
-            {meta.name} Price Chart ({symbol}/{currency})
-          </p>
-
-          <div className="md:flex md:justify-between md:flex-row-reverse space-y-1 md:space-y-0">
-            <div className="p-1  flex space-x-2 rounded-lg bg-gray-700/30 h-fit text-gray-300/90 w-fit font-semibold">
-              <Button onClick={() => setTimeframe("1h")} active={timeframe === "1h"}>
-                1H
-              </Button>
-              <Button onClick={() => setTimeframe("1d")} active={timeframe === "1d"}>
-                1D
-              </Button>
-              <Button onClick={() => setTimeframe("1w")} active={timeframe === "1w"}>
-                1W
-              </Button>
-              {/*<Button>3M</Button>*/}
-            </div>
-
-            <div className="flex md:flex-col space-y-1 space-x-1">
-              <div className="p-1 flex space-x-2 rounded-lg bg-gray-700/30 text-gray-300/90 w-fit h-fit font-semibold">
-                <Button
-                  onClick={() => setCurrency("USD")}
-                  active={currency === "USD"}
-                >
-                  USD
-                </Button>
-                <Button
-                  onClick={() => setCurrency("IDR")}
-                  active={currency === "IDR"}
-                >
-                  IDR
-                </Button>
-              </div>
-              <div className="p-1 flex space-x-2 rounded-lg bg-gray-700/30 text-gray-300/90 w-fit h-full font-semibold">
-                <Button
-                  onClick={() => setChartView("line")}
-                  active={chartView === "line"}
-                >
-                  <FaChartLine />
-                </Button>
-                <Button
-                  onClick={() => setChartView("candle")}
-                  active={chartView === "candle"}
-                >
-                  <FaChartColumn />
-                </Button>
-              </div>
-            </div>
-          </div>
+          <ChartControls
+            timeframe={timeframe}
+            onTimeframeChange={setTimeframe}
+            currency={currency}
+            onCurrencyChange={setCurrency}
+            chartView={chartView}
+            onChartViewChange={setChartView}
+          />
           <div className="py-3">
             {loading && <ChartLoading />}
 

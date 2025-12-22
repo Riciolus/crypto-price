@@ -46,6 +46,10 @@ export default function Header({ price, loading, symbol, currency }: HeaderProps
           )}
         </h2>
       </div>
+
+      <p className="text-sm font-semibold text-gray-400">
+        {meta.name} Price Chart ({symbol}/{currency})
+      </p>
     </div>
   );
 }
