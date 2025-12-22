@@ -5,7 +5,6 @@ import ChartLoading from "@/components/ChartLoading";
 import Header from "@/components/Header";
 import PriceChart from "@/components/PriceChart";
 import { getPriceCandles } from "@/lib/api";
-import { SYMBOL_META } from "@/lib/marketMeta";
 import { TCandle } from "@/types/candle";
 import { TCurrency } from "@/types/currency";
 import { TSymbol } from "@/types/symbol";
@@ -65,6 +64,7 @@ export default function Home() {
           symbol={symbol}
           currency={currency}
           loading={loading}
+          onSymbolChange={setSymbol}
         />
 
         <div className="space-y-2 md:space-y-1">

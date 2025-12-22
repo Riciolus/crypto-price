@@ -2,15 +2,23 @@ import { CURRENCY_META, SYMBOL_META } from "@/lib/marketMeta";
 import { TCurrency } from "@/types/currency";
 import { TSymbol } from "@/types/symbol";
 import Image from "next/image";
+import SymbolSelector from "./SymbolSelector";
 
 type HeaderProps = {
   price: number | null;
   loading: boolean;
   symbol: TSymbol;
   currency: TCurrency;
+  onSymbolChange: (symbol: TSymbol) => void;
 };
 
-export default function Header({ price, loading, symbol, currency }: HeaderProps) {
+export default function Header({
+  price,
+  loading,
+  symbol,
+  currency,
+  onSymbolChange,
+}: HeaderProps) {
   const smeta = SYMBOL_META[symbol];
   const cmeta = CURRENCY_META[currency];
   const meta = { ...smeta, ...cmeta };
@@ -24,12 +32,18 @@ export default function Header({ price, loading, symbol, currency }: HeaderProps
 
   return (
     <div className="pt-5 space-y-2">
-      <div className="flex items-center space-x-2 ">
-        <div className="relative w-6 h-6">
-          <Image alt="" src={meta.icon} fill />
+      <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 ">
+          <div className="relative w-6 h-6">
+            <Image alt="" src={meta.icon} fill />
+          </div>
+          <h1 className="text-xl font-semibold text-neutral-100">{meta.name}</h1>
+          <h3 className="text-lg font-semibold text-zinc-500 font-mono">
+            #{symbol}
+          </h3>
         </div>
-        <h1 className="text-xl font-semibold text-neutral-100">{meta.name}</h1>
-        <h3 className="text-lg font-semibold text-zinc-500 font-mono">#{symbol}</h3>
+
+        <SymbolSelector onChange={onSymbolChange} />
       </div>
 
       <div>
