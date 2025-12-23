@@ -1,22 +1,4 @@
 // lib/marketMeta.ts
-import { TSymbol } from "@/types/symbol";
-
-export const SYMBOL_META: Record<
-  TSymbol,
-  {
-    name: string;
-    icon: string;
-  }
-> = {
-  BTC: {
-    name: "Bitcoin",
-    icon: "/bitcoin.webp",
-  },
-  ETH: {
-    name: "Ethereum",
-    icon: "/ethereum.webp",
-  },
-};
 
 export const CURRENCY_META = {
   USD: {

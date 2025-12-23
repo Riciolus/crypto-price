@@ -8,7 +8,7 @@ export default function Home() {
       <div className="p-3 flex flex-col w-full max-w-3xl px-10 lg:px-6">
         <div className="border-b border-neutral-700/50">
           <div className="w-full flex items-center gap-1  border-neutral-700/50 p-2">
-            <h2 className=" text-zinc-400">Available Coins ▾</h2>
+            <h2 className="text-zinc-400">Available Coins ▾</h2>
           </div>
           {Object.values(COINS).map((coin) => (
             <Link

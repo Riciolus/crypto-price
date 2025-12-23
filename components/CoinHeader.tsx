@@ -11,14 +11,13 @@ type HeaderProps = {
   currency: TCurrency;
 };
 
-export default function Header({ price, loading, coin, currency }: HeaderProps) {
+export default function CoinHeader({ price, loading, coin, currency }: HeaderProps) {
   const cmeta = CURRENCY_META[currency];
-  const meta = { ...coin, ...cmeta };
 
   const formattedPrice =
     price !== null
-      ? new Intl.NumberFormat(meta.locale, {
-          maximumFractionDigits: meta.fractionDigits,
+      ? new Intl.NumberFormat(cmeta.locale, {
+          maximumFractionDigits: cmeta.fractionDigits,
         }).format(price)
       : null;
 
@@ -27,11 +26,11 @@ export default function Header({ price, loading, coin, currency }: HeaderProps) 
       <div className="flex items-center space-x-2">
         <div className="flex items-center space-x-2 ">
           <div className="relative w-6 h-6">
-            <Image alt="" src={meta.icon} fill />
+            <Image alt="" src={coin.icon} fill />
           </div>
-          <h1 className="text-xl font-semibold text-neutral-100">{meta.name}</h1>
+          <h1 className="text-xl font-semibold text-neutral-100">{coin.name}</h1>
           <h3 className="text-lg font-semibold text-zinc-500 font-mono">
-            #{meta.symbol}
+            #{coin.symbol}
           </h3>
         </div>
 
@@ -39,12 +38,12 @@ export default function Header({ price, loading, coin, currency }: HeaderProps) 
       </div>
 
       <div>
-        <h2 className="text-4xl font-bold h-14 flex items-center">
+        <h2 className="text-4xl font-bold h-10 flex items-center">
           {loading ? (
             <span className="w-52 h-8 rounded-md bg-gray-700/40 animate-pulse" />
           ) : formattedPrice ? (
             <span>
-              {meta.symbol}
+              {cmeta.symbol}
               {formattedPrice}
             </span>
           ) : (
@@ -54,7 +53,7 @@ export default function Header({ price, loading, coin, currency }: HeaderProps) 
       </div>
 
       <p className="text-sm font-semibold text-gray-400">
-        {meta.name} Price Chart ({meta.symbol}/{currency})
+        {coin.name} Price Chart ({coin.symbol}/{currency})
       </p>
     </div>
   );

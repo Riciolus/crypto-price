@@ -2,7 +2,7 @@
 
 import ChartControls from "@/components/ChartControls";
 import ChartLoading from "@/components/ChartLoading";
-import Header from "@/components/Header";
+import CoinOverview from "@/components/CoinOverview";
 import PriceChart from "@/components/PriceChart";
 import { getPriceCandles } from "@/lib/api";
 import { COINS } from "@/lib/symbolMeta";
@@ -13,8 +13,9 @@ import { TSymbol } from "@/types/symbol";
 import { TTimeframe } from "@/types/timeframe";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import CoinHeader from "@/components/CoinHeader";
 
-export default function Home() {
+export default function CoinPage() {
   const params = useParams<{ symbol: string }>();
   const symbol = params.symbol.toUpperCase() as TSymbol;
 
@@ -22,7 +23,7 @@ export default function Home() {
     notFound();
   }
 
-  const smeta = COINS[symbol];
+  const coin = COINS[symbol];
 
   const [data, setData] = useState<TCandle[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,9 +69,9 @@ export default function Home() {
   return (
     <div className="flex justify-center ">
       <div className="p-3 flex flex-col space-y-5 w-full max-w-400 px-10 lg:px-6">
-        <Header
+        <CoinHeader
           price={latestPrice}
-          coin={smeta}
+          coin={coin}
           currency={currency}
           loading={loading}
         />
@@ -103,7 +104,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* <CoinOverview /> */}
+        <CoinOverview coin={coin} />
       </div>
     </div>
   );
