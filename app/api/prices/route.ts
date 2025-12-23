@@ -1,5 +1,6 @@
 import { fetchHistoricalCandles } from "@/lib/cryptocompare";
-import { getRedisClient } from "@/lib/redis";
+import { redis } from "@/lib/redis";
+import { TCandle } from "@/types/candle";
 import { CURRENCIES, TCurrency } from "@/types/currency";
 import { SYMBOLS, TSymbol } from "@/types/symbol";
 import { TTimeframe } from "@/types/timeframe";
@@ -44,13 +45,12 @@ export async function GET(req: Request) {
   const timeframe = rawTimeframe;
 
   try {
-    const redis = getRedisClient();
     const key = `prices:${symbol}:${currency}:${timeframe}`;
 
-    const cached = await redis.get(key);
+    const cached = await redis.get<TCandle[]>(key);
 
     if (cached) {
-      return Response.json(JSON.parse(cached));
+      return Response.json(cached);
     }
 
     const candles = await fetchHistoricalCandles({
@@ -61,7 +61,7 @@ export async function GET(req: Request) {
 
     const ttl = TTL_MAP[timeframe];
     await redis.set(key, JSON.stringify(candles), {
-      EX: ttl,
+      ex: ttl,
     });
 
     return Response.json(candles);
