@@ -46,6 +46,9 @@ export default function PriceChart({ candles }: PriceChartProps) {
         rightOffset: 0,
         fixRightEdge: false,
         lockVisibleTimeRangeOnResize: false,
+
+        timeVisible: true,
+        secondsVisible: false,
       },
       handleScale: false,
       handleScroll: false,
