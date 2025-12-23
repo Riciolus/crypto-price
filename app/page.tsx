@@ -6,12 +6,11 @@ import Header from "@/components/Header";
 import PriceChart from "@/components/PriceChart";
 import { getPriceCandles } from "@/lib/api";
 import { TCandle } from "@/types/candle";
+import { TChartView } from "@/types/chartView";
 import { TCurrency } from "@/types/currency";
 import { TSymbol } from "@/types/symbol";
 import { TTimeframe } from "@/types/timeframe";
 import { useEffect, useState } from "react";
-
-type TChartView = "line" | "candle";
 
 export default function Home() {
   const [data, setData] = useState<TCandle[] | null>(null);
@@ -79,7 +78,7 @@ export default function Home() {
           <div className="py-3">
             {loading && <ChartLoading />}
 
-            {!loading && data && <PriceChart candles={data} />}
+            {!loading && data && <PriceChart candles={data} chartView={chartView} />}
 
             {!loading && !data && (
               <div className="h-[400px] flex items-center justify-center text-gray-400">
