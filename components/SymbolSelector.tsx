@@ -1,14 +1,13 @@
 "use client";
 
-import { TSymbol } from "@/types/symbol";
+import { COINS } from "@/lib/symbolMeta";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-type Props = {
-  onChange: (symbol: TSymbol) => void;
-};
+export default function SymbolSelector() {
+  const router = useRouter();
 
-export default function SymbolSelector({ onChange }: Props) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -52,49 +51,30 @@ export default function SymbolSelector({ onChange }: Props) {
               data-[side=bottom]:slide-in-from-top-2
   "
         >
-          <DropdownMenu.Item
-            onSelect={() => onChange("BTC")}
-            className="
-              cursor-pointer
-              rounded-sm
-              px-2 py-1
-              text-sm
-              text-white
-              hover:bg-neutral-800
-              focus:bg-neutral-800
-              focus:outline-none
-            "
-          >
-            <div className="flex gap-2 items-center">
-              <div className="relative w-4 h-4">
-                <Image alt="" src="/bitcoin.webp" fill />
+          {Object.values(COINS).map((coin) => (
+            <DropdownMenu.Item
+              key={coin.symbol}
+              onSelect={() => router.push(`/coins/${coin.symbol.toLowerCase()}`)}
+              className="
+            cursor-pointer
+            rounded-sm
+            px-2 py-1
+            text-sm
+            text-white
+            hover:bg-neutral-800
+            focus:bg-neutral-800
+            focus:outline-none
+          "
+            >
+              <div className="flex gap-2 items-center">
+                <div className="relative w-4 h-4">
+                  <Image src={coin.icon} alt={`${coin.name} icon`} fill />
+                </div>
+                {coin.name}
+                <span className="text-zinc-500 font-mono">({coin.symbol})</span>
               </div>
-              Bitcoin<span className="text-zinc-500 font-mono">(BTC)</span>
-            </div>
-          </DropdownMenu.Item>
-
-          <DropdownMenu.Separator className="my-1 h-px bg-neutral-700/80" />
-
-          <DropdownMenu.Item
-            onSelect={() => onChange("ETH")}
-            className="
-              cursor-pointer
-              rounded-sm
-              px-2 py-1
-              text-sm
-              text-white
-              hover:bg-neutral-800
-              focus:bg-neutral-800
-              focus:outline-none
-            "
-          >
-            <div className="flex gap-2 items-center">
-              <div className="relative w-4 h-4">
-                <Image alt="" src="/ethereum.webp" fill />
-              </div>
-              Ethereum<span className="text-zinc-500 font-mono">(ETH)</span>
-            </div>
-          </DropdownMenu.Item>
+            </DropdownMenu.Item>
+          ))}
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>

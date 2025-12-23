@@ -1,27 +1,19 @@
-import { CURRENCY_META, SYMBOL_META } from "@/lib/marketMeta";
 import { TCurrency } from "@/types/currency";
-import { TSymbol } from "@/types/symbol";
 import Image from "next/image";
 import SymbolSelector from "./SymbolSelector";
+import { CURRENCY_META } from "@/lib/marketMeta";
+import { TCoinMeta } from "@/types/coin";
 
 type HeaderProps = {
   price: number | null;
   loading: boolean;
-  symbol: TSymbol;
+  coin: TCoinMeta;
   currency: TCurrency;
-  onSymbolChange: (symbol: TSymbol) => void;
 };
 
-export default function Header({
-  price,
-  loading,
-  symbol,
-  currency,
-  onSymbolChange,
-}: HeaderProps) {
-  const smeta = SYMBOL_META[symbol];
+export default function Header({ price, loading, coin, currency }: HeaderProps) {
   const cmeta = CURRENCY_META[currency];
-  const meta = { ...smeta, ...cmeta };
+  const meta = { ...coin, ...cmeta };
 
   const formattedPrice =
     price !== null
@@ -39,11 +31,11 @@ export default function Header({
           </div>
           <h1 className="text-xl font-semibold text-neutral-100">{meta.name}</h1>
           <h3 className="text-lg font-semibold text-zinc-500 font-mono">
-            #{symbol}
+            #{meta.symbol}
           </h3>
         </div>
 
-        <SymbolSelector onChange={onSymbolChange} />
+        <SymbolSelector />
       </div>
 
       <div>
@@ -62,7 +54,7 @@ export default function Header({
       </div>
 
       <p className="text-sm font-semibold text-gray-400">
-        {meta.name} Price Chart ({symbol}/{currency})
+        {meta.name} Price Chart ({meta.symbol}/{currency})
       </p>
     </div>
   );
